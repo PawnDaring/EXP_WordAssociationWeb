@@ -6,7 +6,7 @@
 I created this to build a space where my ideas could come to life—showing how they interrelate and form meaningful connections. It's like a brainstorming playground for your brain! 🧠💡  
 
 ## How It Works  
-This app was built using modern web technologies like **TypeScript**, **Vite**, and **Tailwind CSS**. It's a lightweight, fast, and intuitive space for idea exploration. To get started, you'll need an **API key from OpenAI** since the tool uses AI to generate and enrich connections between your ideas.  
+This app was built using modern web technologies like **TypeScript**, **Vite**, and **Tailwind CSS**. It's a lightweight, fast, and intuitive space for idea exploration. The app communicates with a small Express server that handles requests to OpenAI.
 
 ---
 
@@ -25,14 +25,20 @@ Set up everything you need by running:
 npm install  
 ```  
 
-### 3️⃣ Add Your OpenAI API Key  
-Create a `.env` file in the project folder and add your OpenAI API key:  
+### 3️⃣ Add Your OpenAI API Key
+Create a `.env` file in the project folder (used by the backend) and add your OpenAI API key:
 ```env  
 OPENAI_API_KEY=your-api-key-here  
 ```  
 
-### 4️⃣ Run the App  
-Start the development server:  
+### 4️⃣ Run the Backend
+Start the Express server:
+```bash
+npm run server
+```
+
+### 5️⃣ Run the Frontend
+In a new terminal, start the development server:
 ```bash  
 npm run dev  
 ```  
@@ -42,7 +48,7 @@ You can now access the app in your browser at `http://localhost:3000`.
 
 ## Features ✨  
 - **Interactive Brainstorming:** Build and visualize idea connections effortlessly.  
-- **AI-Powered Suggestions:** Enrich your thought process with AI-generated associations (requires an OpenAI API key).  
+- **AI-Powered Suggestions:** Enrich your thought process with AI-generated associations powered by OpenAI.
 - **Simple and Fast:** Powered by cutting-edge web tools for a smooth experience.  
 
 ---

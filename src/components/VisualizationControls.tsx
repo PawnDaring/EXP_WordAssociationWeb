@@ -6,8 +6,6 @@ interface VisualizationControlsProps {
   setKeywordSize: (size: number) => void;
   associationOpacity: number;
   setAssociationOpacity: (opacity: number) => void;
-  apiKey: string;
-  setApiKey: (key: string) => void;
 }
 
 export const VisualizationControls: React.FC<VisualizationControlsProps> = ({
@@ -15,8 +13,6 @@ export const VisualizationControls: React.FC<VisualizationControlsProps> = ({
   setKeywordSize,
   associationOpacity,
   setAssociationOpacity,
-  apiKey,
-  setApiKey,
 }) => {
   return (
     <div className="absolute bottom-6 right-6 bg-gray-800 border border-gray-700 rounded-lg p-4 w-72">
@@ -54,18 +50,6 @@ export const VisualizationControls: React.FC<VisualizationControlsProps> = ({
           />
         </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-200 mb-2">
-            OpenAI API Key
-          </label>
-          <input
-            type="password"
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-            placeholder="Enter your OpenAI API key"
-            className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:ring-cyan-500 focus:border-cyan-500"
-          />
-        </div>
       </div>
     </div>
   );

@@ -1,38 +1,18 @@
-import OpenAI from 'openai';
-
-export async function generateMetadata(
-  word: string,
-  apiKey: string
-): Promise<string[]> {
-  if (!apiKey) {
-    console.error('No API key provided');
-    return [];
-  }
-
+export async function generateMetadata(word: string): Promise<string[]> {
   try {
-    const openai = new OpenAI({
-      apiKey: apiKey,
-      dangerouslyAllowBrowser: true,
+    const response = await fetch('/api/metadata', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ word }),
     });
 
-    const response = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are word associating master mind.',
-        },
-        {
-          role: 'user',
-          content: `List 20 words that best represent this word/phrase: ${word}. emphasizing traits or concepts that link it to categories or related ideas. Ensure at least one keyword connects it to its general classification, seperate with comas and keep everything lowercase.`,
-        },
-      ],
-      temperature: 0.7,
-      max_tokens: 50,
-    });
+    if (!response.ok) {
+      console.error('Backend error:', await response.text());
+      return [];
+    }
 
-    const content = response.choices[0]?.message?.content || '';
-    return content.split(',').map((word) => word.trim());
+    const data = await response.json();
+    return Array.isArray(data.metadata) ? data.metadata : [];
   } catch (error) {
     console.error('Error generating metadata:', error);
     return [];

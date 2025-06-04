@@ -7,15 +7,13 @@ interface MetadataSidebarProps {
   metadata: string[];
   onSave: (metadata: string[]) => void;
   connectedWords?: Array<{ word: string; sharedKeywords: string[] }>;
-  apiKey?: string;
 }
 
 export const MetadataSidebar: React.FC<MetadataSidebarProps> = ({
   word,
   metadata,
   onSave,
-  connectedWords = [],
-  apiKey
+  connectedWords = []
 }) => {
   const [keywords, setKeywords] = useState<string>(metadata.join(', '));
   const [isGenerating, setIsGenerating] = useState(false);
@@ -33,11 +31,11 @@ export const MetadataSidebar: React.FC<MetadataSidebarProps> = ({
   };
 
   const handleRegenerateMetadata = async () => {
-    if (!word || !apiKey) return;
+    if (!word) return;
     
     setIsGenerating(true);
     try {
-      const newMetadata = await generateMetadata(word, apiKey);
+      const newMetadata = await generateMetadata(word);
       if (newMetadata.length > 0) {
         setKeywords(newMetadata.join(', '));
         onSave(newMetadata);
@@ -70,7 +68,7 @@ export const MetadataSidebar: React.FC<MetadataSidebarProps> = ({
           </label>
           <button
             onClick={handleRegenerateMetadata}
-            disabled={isGenerating || !apiKey}
+            disabled={isGenerating}
             className="flex items-center space-x-1 px-2 py-1 text-sm bg-cyan-600 text-white rounded hover:bg-cyan-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <RefreshCw className={`h-4 w-4 ${isGenerating ? 'animate-spin' : ''}`} />
