@@ -3,7 +3,7 @@ import { Brain, Search, AlertCircle } from 'lucide-react';
 import { Graph } from './components/Graph';
 import { MetadataSidebar } from './components/MetadataModal';
 import { VisualizationControls } from './components/VisualizationControls';
-import { wordAssociations, wordRelationships } from './wordData';
+import { wordAssociations } from './wordData';
 import { GraphData, WordNode, WordLink } from './types';
 import { generateMetadata } from './services/openai';
 
@@ -24,9 +24,6 @@ function App() {
   // Visualization settings
   const [keywordSize, setKeywordSize] = useState(12);
   const [associationOpacity, setAssociationOpacity] = useState(0.6);
-  const [apiKey, setApiKey] = useState(
-    import.meta.env.VITE_OPENAI_API_KEY || ''
-  );
 
   const findSharedKeywords = (word1: string, word2: string): string[] => {
     const metadata1 = nodeMetadata[word1] || [];
@@ -74,7 +71,7 @@ function App() {
         });
       });
 
-      words.forEach((otherWord, otherIndex) => {
+      words.forEach((otherWord) => {
         if (word !== otherWord) {
           const pairKey = [word, otherWord].sort().join('-');
           if (!processedPairs.has(pairKey)) {
@@ -108,13 +105,6 @@ function App() {
   }, [selectedWords, nodeMetadata]);
 
   const handleAddWord = async () => {
-    if (!apiKey) {
-      setError(
-        'Please enter an OpenAI API key in the settings panel to add words'
-      );
-      return;
-    }
-
     if (searchTerm && !selectedWords.includes(searchTerm)) {
       setError(null);
       const newWord = searchTerm.toLowerCase().trim();
@@ -123,7 +113,7 @@ function App() {
       setSearchTerm('');
 
       try {
-        const metadata = await generateMetadata(newWord, apiKey);
+        const metadata = await generateMetadata(newWord);
         if (metadata.length > 0) {
           setNodeMetadata((prev) => ({
             ...prev,
@@ -134,9 +124,7 @@ function App() {
         }
       } catch (error) {
         console.error('Error generating metadata:', error);
-        setError(
-          'Failed to generate metadata. Please check your API key and try again.'
-        );
+        setError('Failed to generate metadata.');
         setSelectedWords((prev) => prev.filter((w) => w !== newWord));
       } finally {
         setIsLoading((prev) => ({ ...prev, [newWord]: false }));
@@ -167,10 +155,6 @@ function App() {
     }
   };
 
-  const handleApiKeyChange = (newKey: string) => {
-    setApiKey(newKey);
-    setError(null);
-  };
 
   return (
     <div className="min-h-screen bg-gray-900">
@@ -196,18 +180,12 @@ function App() {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleAddWord()}
-                    placeholder={
-                      apiKey
-                        ? 'Enter a word...'
-                        : 'Enter your API key in settings first...'
-                    }
-                    disabled={!apiKey}
+                    placeholder="Enter a word..."
                     className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white placeholder-gray-400 focus:ring-cyan-500 focus:border-cyan-500 disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                   <button
                     onClick={handleAddWord}
-                    disabled={!apiKey}
-                    className="absolute right-2 top-2 text-gray-400 hover:text-cyan-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="absolute right-2 top-2 text-gray-400 hover:text-cyan-400"
                   >
                     <Search className="h-5 w-5" />
                   </button>
@@ -254,17 +232,7 @@ function App() {
               />
             ) : (
               <div className="h-full flex items-center justify-center text-gray-400">
-                {apiKey ? (
-                  'Enter words above to explore their associations'
-                ) : (
-                  <div className="text-center">
-                    <AlertCircle className="h-8 w-8 mx-auto mb-2" />
-                    <p>
-                      Please enter your OpenAI API key in the settings panel to
-                      begin
-                    </p>
-                  </div>
-                )}
+                Enter words above to explore their associations
               </div>
             )}
 
@@ -273,8 +241,6 @@ function App() {
               setKeywordSize={setKeywordSize}
               associationOpacity={associationOpacity}
               setAssociationOpacity={setAssociationOpacity}
-              apiKey={apiKey}
-              setApiKey={handleApiKeyChange}
             />
           </div>
         </div>
@@ -286,7 +252,6 @@ function App() {
           connectedWords={
             selectedNode ? getConnectedWords(selectedNode.id) : []
           }
-          apiKey={apiKey}
         />
       </main>
     </div>
